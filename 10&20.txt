@@ -1,0 +1,1416 @@
+S1 Q1 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Login</title> 
+</head> 
+<body> 
+    <form id="loginForm"> 
+        <label>Email: <input type="text" id="email" required></label> 
+        <span id="emailError" style="color:red;"></span> 
+        <br> 
+        <label>Password: <input type="password" id="password" required></label> 
+        <span id="passwordError" style="color:red;"></span> 
+        <br> 
+        <button type="submit">Login</button> 
+    </form> 
+ 
+    <script> 
+        document.getElementById("loginForm").addEventListener("submit", function(event) { 
+            let email = document.getElementById("email").value; 
+            let password = document.getElementById("password").value; 
+            let emailError = document.getElementById("emailError"); 
+            let passwordError = document.getElementById("passwordError"); 
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+            let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/; 
+            emailError.textContent = emailPattern.test(email) ? "" : "Invalid email"; 
+            passwordError.textContent = passwordPattern.test(password) ? "" : "Invalid password"; 
+            if (!emailPattern.test(email) || !passwordPattern.test(password)) event.preventDefault(); 
+        }); 
+    </script> 
+</body> 
+</html> 
+ 
+S1 Q2 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Student Registration</title> 
+</head> 
+<body> 
+    <form id="registrationForm"> 
+        <label>First Name: <input type="text" id="firstName" required></label> 
+        <span id="firstNameError" style="color:red;"></span> 
+        <br> 
+        <label>Last Name: <input type="text" id="lastName" required></label> 
+        <span id="lastNameError" style="color:red;"></span> 
+        <br> 
+        <label>Age: <input type="number" id="age" required></label> 
+        <span id="ageError" style="color:red;"></span> 
+        <br> 
+        <button type="submit">Register</button> 
+    </form> 
+ 
+    <script> 
+        document.getElementById("registrationForm").addEventListener("submit", function(event) { 
+            let firstName = document.getElementById("firstName").value; 
+            let lastName = document.getElementById("lastName").value; 
+            let age = document.getElementById("age").value; 
+            let firstNameError = document.getElementById("firstNameError"); 
+            let lastNameError = document.getElementById("lastNameError"); 
+            let ageError = document.getElementById("ageError"); 
+            let namePattern = /^[A-Za-z]+$/; 
+            let ageMin = 18, ageMax = 50; 
+             
+            firstNameError.textContent = namePattern.test(firstName) ? "" : "Only alphabets allowed"; 
+            lastNameError.textContent = namePattern.test(lastName) ? "" : "Only alphabets allowed"; 
+            ageError.textContent = (age >= ageMin && age <= ageMax) ? "" : "Age must be between 18 and 50"; 
+             
+            if (!namePattern.test(firstName) || !namePattern.test(lastName) || age < ageMin || age > ageMax) { 
+                event.preventDefault(); 
+            } 
+        }); 
+    </script> 
+</body> 
+</html> 
+ 
+S2 Q1 
+function reverseString(str) { 
+    return str.split('').reverse().join(''); 
+} 
+ 
+const output = "Full Stack!"; 
+console.log(reverseString(output)); 
+ 
+S2 Q2 
+const express = require('express'); 
+const fs = require('fs'); 
+const path = require('path'); 
+ 
+const app = express(); 
+const PORT = 3000; 
+ 
+app.use(express.urlencoded({ extended: true })); 
+ 
+app.get('/', (req, res) => { 
+    res.send(` 
+        <form action="/append" method="post"> 
+            <label>First File Name: <input type="text" name="file1" required></label><br> 
+            <label>Second File Name: <input type="text" name="file2" required></label><br> 
+            <button type="submit">Append</button> 
+        </form> 
+    `); 
+}); 
+ 
+app.post('/append', (req, res) => { 
+    const { file1, file2 } = req.body; 
+     
+    const filePath1 = path.join(__dirname, file1); 
+    const filePath2 = path.join(__dirname, file2); 
+     
+    if (!fs.existsSync(filePath1) || !fs.existsSync(filePath2)) { 
+        return res.send('One or both files do not exist.'); 
+    } 
+     
+    fs.readFile(filePath1, 'utf8', (err, data) => { 
+        if (err) return res.send('Error reading first file.'); 
+         
+        fs.appendFile(filePath2, data, (err) => { 
+            if (err) return res.send('Error appending to second file.'); 
+            res.send('Content appended successfully!'); 
+        }); 
+    }); 
+}); 
+ 
+app.listen(PORT, () => { 
+    console.log(`Server running at http://localhost:${PORT}`); 
+}); 
+ 
+S5 Q1 
+npm init -y 
+npm install express multer 
+ 
+const express = require('express'); 
+const multer = require('multer'); 
+ 
+const app = express(); 
+const upload = multer({ dest: 'uploads/' }); 
+const port = 3000; 
+ 
+// Simple HTML form 
+const htmlForm = ` 
+<!DOCTYPE html> 
+<html> 
+<body> 
+    <form action="/upload" method="post" enctype="multipart/form-data"> 
+        <input type="file" name="fileToUpload"> 
+        <input type="submit" value="Upload"> 
+    </form> 
+</body> 
+</html> 
+`; 
+ 
+app.get('/', (req, res) => { 
+    res.send(htmlForm); 
+}); 
+ 
+app.post('/upload', upload.single('fileToUpload'), (req, res) => { 
+    res.send('File uploaded!'); 
+}); 
+ 
+app.listen(port, () => { 
+    console.log(`Server running at http://localhost:${port}`); 
+}); 
+ 
+node server.js 
+ 
+S5 Q2 
+<!DOCTYPE html> 
+<html ng-app="validationApp"> 
+<head> 
+    <title>Username & Password Validation</title> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> 
+    <style> 
+        .container { 
+            margin: 20px; 
+        } 
+        .input-field { 
+            margin: 10px 0; 
+        } 
+        .result { 
+            margin-top: 10px; 
+            color: green; 
+        } 
+        .error { 
+            color: red; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div ng-controller="ValidationController" class="container"> 
+        <h2>Login Form Validation</h2> 
+         
+        <div class="input-field"> 
+            <label>Username:</label><br> 
+            <input type="text" ng-model="username" placeholder="Enter username"> 
+        </div> 
+         
+        <div class="input-field"> 
+            <label>Password:</label><br> 
+            <input type="password" ng-model="password" placeholder="Enter password"> 
+        </div> 
+         
+        <button ng-click="validateForm()">Validate</button> 
+         
+        <div class="result" ng-show="validationMessage && !errorMessage"> 
+            {{validationMessage}} 
+        </div> 
+        <div class="error" ng-show="errorMessage"> 
+            {{errorMessage}} 
+        </div> 
+    </div> 
+ 
+    <script> 
+        // Define Angular module 
+        angular.module('validationApp', []) 
+            .controller('ValidationController', function($scope) { 
+                $scope.username = ''; 
+                $scope.password = ''; 
+                $scope.validationMessage = ''; 
+                $scope.errorMessage = ''; 
+ 
+                $scope.validateForm = function() { 
+                    // Reset messages 
+                    $scope.validationMessage = ''; 
+                    $scope.errorMessage = ''; 
+ 
+                    // Username validation 
+                    if (!$scope.username) { 
+                        $scope.errorMessage = 'Enter username'; 
+                        return; 
+                    } 
+                    if ($scope.username.length < 3) { 
+                        $scope.errorMessage = 'Username is too short'; 
+                        return; 
+                    } 
+ 
+                    // Password validation 
+                    if (!$scope.password) { 
+                        $scope.errorMessage = 'Enter password'; 
+                        return; 
+                    } 
+                    if ($scope.password.length < 8) { 
+                        $scope.errorMessage = 'Password must be at least 8 characters'; 
+                        return; 
+                    } 
+ 
+                    // If all validations pass 
+                    $scope.validationMessage = 'Valid username and password'; 
+                }; 
+            }); 
+    </script> 
+</body> 
+</html> 
+ 
+S6 Q1 
+<!DOCTYPE html> 
+<html ng-app="alertApp"> 
+<head> 
+    <title>AngularJS Alert Example</title> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> 
+    <style> 
+        .container { 
+            margin: 20px; 
+        } 
+        button { 
+            padding: 10px 20px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+        } 
+        button:hover { 
+            background-color: #45a049; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div ng-controller="AlertController" class="container"> 
+        <h2>Click Example</h2> 
+        <button ng-click="showAlert()">Click Me!</button> 
+    </div> 
+ 
+    <script> 
+        // Define Angular module 
+        angular.module('alertApp', []) 
+            .controller('AlertController', function($scope) { 
+                $scope.showAlert = function() { 
+                    alert('Hello! You clicked the button!'); 
+                }; 
+            }); 
+    </script> 
+</body> 
+</html> 
+ 
+S6 Q2 
+//Save as Server.js 
+const express = require('express'); 
+const fs = require('fs'); 
+const path = require('path'); 
+ 
+const app = express(); 
+const port = 3000; 
+ 
+// Middleware to handle file requests 
+app.get('/:filename', (req, res) => { 
+    const fileName = req.params.filename; 
+    const filePath = path.join(__dirname, fileName); 
+ 
+    // Check if file exists and read it 
+    fs.readFile(filePath, (err, data) => { 
+        if (err) { 
+            // If any error occurs (file not found, permission denied, etc.) 
+            res.status(404).send('404 - File Not Found'); 
+            return; 
+        } 
+ 
+        // Determine content type based on file extension 
+        const ext = path.extname(fileName).toLowerCase(); 
+        let contentType = 'text/plain'; 
+         
+        switch (ext) { 
+            case '.html': 
+                contentType = 'text/html'; 
+                break; 
+            case '.css': 
+                contentType = 'text/css'; 
+                break; 
+            case '.js': 
+                contentType = 'application/javascript'; 
+                break; 
+            case '.jpg': 
+            case '.jpeg': 
+                contentType = 'image/jpeg'; 
+                break; 
+            case '.png': 
+                contentType = 'image/png'; 
+                break; 
+        } 
+ 
+        // Send file content with appropriate content type 
+        res.setHeader('Content-Type', contentType); 
+        res.send(data); 
+    }); 
+}); 
+ 
+// Handle root request 
+app.get('/', (req, res) => { 
+    res.send('Please specify a filename in the URL (e.g., /example.txt)'); 
+}); 
+ 
+// 404 handler for undefined routes 
+app.use((req, res) => { 
+    res.status(404).send('404 - File Not Found'); 
+}); 
+ 
+// Start server 
+app.listen(port, () => { 
+    console.log(`Server running at http://localhost:${port}`); 
+}); 
+npm init -y 
+node server.js 
+ 
+S7 Q1 
+//index.html 
+<!DOCTYPE html> 
+<html ng-app="dateTimeApp"> 
+<head> 
+    <title>Current Date and Time</title> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> 
+    <style> 
+        .container { 
+            margin: 20px; 
+            font-family: Arial, sans-serif; 
+        } 
+        .datetime { 
+            font-size: 24px; 
+            padding: 15px; 
+            background-color: #f0f0f0; 
+            border-radius: 5px; 
+            display: inline-block; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div ng-controller="DateTimeController" class="container"> 
+        <h2>Current Date and Time</h2> 
+        <div class="datetime">{{currentDateTime}}</div> 
+    </div> 
+ 
+    <script> 
+        // Define Angular module 
+        angular.module('dateTimeApp', []) 
+            .controller('DateTimeController', function($scope, $interval) { 
+                // Function to update date and time 
+                function updateDateTime() { 
+                    $scope.currentDateTime = new Date().toLocaleString(); 
+                } 
+ 
+                // Initial call 
+                updateDateTime(); 
+ 
+                // Update every second (1000 milliseconds) 
+                $interval(updateDateTime, 1000); 
+            }); 
+    </script> 
+</body> 
+</html> 
+ 
+S7 Q2 
+//save as mian.js 
+// main.js 
+const EventEmitter = require('events'); 
+ 
+// Create a custom event emitter class 
+class MyEmitter extends EventEmitter { 
+    constructor() { 
+        super(); 
+        this.running = true; 
+    } 
+ 
+    // Method to start the main event loop 
+    start() { 
+        console.log('Event-driven application started. Listening for events...'); 
+        console.log('Available events: "dataReceived", "error", "stop"'); 
+         
+        // Simulate some async operations that might trigger events 
+        setInterval(() => { 
+            if (this.running) { 
+                const random = Math.random(); 
+                if (random < 0.3) { 
+                    this.emit('dataReceived', { message: 'New data arrived', timestamp: new Date() }); 
+                } else if (random < 0.4) { 
+                    this.emit('error', new Error('Something went wrong')); 
+                } 
+            } 
+        }, 2000); // Check every 2 seconds 
+    } 
+ 
+    // Method to stop the application 
+    stop() { 
+        this.running = false; 
+        console.log('Application stopping...'); 
+    } 
+} 
+ 
+// Create an instance of our emitter 
+const myEmitter = new MyEmitter(); 
+ 
+// Define callback functions for different events 
+myEmitter.on('dataReceived', (data) => { 
+    console.log('Event: dataReceived'); 
+    console.log(`Data: ${JSON.stringify(data)}`); 
+}); 
+ 
+myEmitter.on('error', (err) => { 
+    console.log('Event: error'); 
+    console.log(`Error: ${err.message}`); 
+    // Could potentially stop the app on critical errors 
+    // myEmitter.stop(); 
+}); 
+ 
+myEmitter.on('stop', () => { 
+    myEmitter.stop(); 
+    console.log('Application stopped'); 
+}); 
+ 
+// Handle process interruption (Ctrl+C) 
+process.on('SIGINT', () => { 
+    myEmitter.emit('stop'); 
+    process.exit(0); 
+}); 
+ 
+// Start the application 
+myEmitter.start(); 
+ 
+// Example of manually triggering an event after 10 seconds 
+setTimeout(() => { 
+    myEmitter.emit('dataReceived', { message: 'Manual data trigger', timestamp: new Date() }); 
+}, 10000); 
+ 
+// Example of stopping the application after 20 seconds 
+setTimeout(() => { 
+    myEmitter.emit('stop'); 
+}, 20000); 
+ 
+S8 Q1 
+//save as server.js 
+// server.js 
+const http = require('http'); 
+ 
+// Define the port to listen on 
+const PORT = 3000; 
+ 
+// Create the server 
+const server = http.createServer((req, res) => { 
+    // Set the response header 
+    res.writeHead(200, { 'Content-Type': 'text/html' }); 
+     
+    // Handle different routes 
+    if (req.url === '/' || req.url === '/home') { 
+        res.write('<h1>Welcome to the Home Page</h1>'); 
+        res.write('<p>This is a simple Node.js web server</p>'); 
+    } else if (req.url === '/about') { 
+        res.write('<h1>About Page</h1>'); 
+        res.write('<p>Learn more about this simple server</p>'); 
+    } else { 
+        // Handle 404 - Not Found 
+        res.writeHead(404, { 'Content-Type': 'text/html' }); 
+        res.write('<h1>404 - Page Not Found</h1>'); 
+    } 
+     
+    // End the response 
+    res.end(); 
+}); 
+ 
+// Start the server 
+server.listen(PORT, () => { 
+    console.log(`Server is running on http://localhost:${PORT}`); 
+}); 
+ 
+// Handle server errors 
+server.on('error', (err) => { 
+    console.error('Server error:', err); 
+}); 
+Node server.js  
+ 
+S8 Q2 
+//save as index.html 
+<!DOCTYPE html> 
+<html ng-app="studentApp"> 
+<head> 
+    <title>Student Details</title> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> 
+    <style> 
+        .container { 
+            margin: 20px; 
+            font-family: Arial, sans-serif; 
+        } 
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+        } 
+        th, td { 
+            padding: 10px; 
+            text-align: left; 
+            border: 1px solid #ddd; 
+        } 
+        th { 
+            background-color: #4CAF50; 
+            color: white; 
+        } 
+        tr:nth-child(even) { 
+            background-color: #f2f2f2; 
+        } 
+        tr:hover { 
+            background-color: #ddd; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div ng-controller="StudentController" class="container"> 
+        <h2>Student Details</h2> 
+        <table> 
+            <thead> 
+                <tr> 
+                    <th>ID</th> 
+                    <th>Name</th> 
+                    <th>Age</th> 
+                    <th>Grade</th> 
+                    <th>Email</th> 
+                </tr> 
+            </thead> 
+            <tbody> 
+                <tr ng-repeat="student in students"> 
+                    <td>{{student.id}}</td> 
+                    <td>{{student.name}}</td> 
+                    <td>{{student.age}}</td> 
+                    <td>{{student.grade}}</td> 
+                    <td>{{student.email}}</td> 
+                </tr> 
+            </tbody> 
+        </table> 
+    </div> 
+ 
+    <script> 
+        // Define Angular module 
+        angular.module('studentApp', []) 
+            .controller('StudentController', function($scope) { 
+                // Array of 10 student objects 
+                $scope.students = [ 
+                    { id: 1, name: 'John Doe', age: 20, grade: 'A', email: 'john@example.com' }, 
+                    { id: 2, name: 'Jane Smith', age: 19, grade: 'B', email: 'jane@example.com' }, 
+                    { id: 3, name: 'Mike Johnson', age: 21, grade: 'A-', email: 'mike@example.com' }, 
+                    { id: 4, name: 'Sarah Williams', age: 20, grade: 'B+', email: 'sarah@example.com' }, 
+                    { id: 5, name: 'Tom Brown', age: 22, grade: 'A', email: 'tom@example.com' }, 
+                    { id: 6, name: 'Emily Davis', age: 19, grade: 'B', email: 'emily@example.com' }, 
+                    { id: 7, name: 'Alex Wilson', age: 21, grade: 'A-', email: 'alex@example.com' }, 
+                    { id: 8, name: 'Lisa Anderson', age: 20, grade: 'B+', email: 'lisa@example.com' }, 
+                    { id: 9, name: 'David Taylor', age: 22, grade: 'A', email: 'david@example.com' }, 
+                    { id: 10, name: 'Rachel Martinez', age: 19, grade: 'B', email: 'rachel@example.com' } 
+                ]; 
+            }); 
+    </script> 
+</body> 
+</html> 
+ 
+S9 Q1 
+//npm install express 
+//App.js 
+const express = require('express'); 
+const app = express(); 
+const port = 3000; 
+ 
+// Serve HTML form when user visits the root URL 
+app.get('/', (req, res) => { 
+  res.send(` 
+    <html> 
+      <head> 
+        <title>String Concatenation</title> 
+      </head> 
+      <body> 
+        <h1>Concatenate Two Strings</h1> 
+        <form action="/concat" method="get"> 
+          <label for="string1">String 1:</label> 
+          <input type="text" id="string1" name="string1" required> 
+          <br> 
+          <label for="string2">String 2:</label> 
+          <input type="text" id="string2" name="string2" required> 
+          <br><br> 
+          <button type="submit">Concatenate</button> 
+        </form> 
+      </body> 
+    </html> 
+  `); 
+}); 
+ 
+// Handle form submission and show concatenated result 
+app.get('/concat', (req, res) => { 
+  const { string1, string2 } = req.query; 
+  const result = `${string1} ${string2}`; 
+   
+  res.send(` 
+    <html> 
+      <head> 
+        <title>Concatenation Result</title> 
+      </head> 
+      <body> 
+        <h1>Result: ${result}</h1> 
+        <a href="/">Go Back</a> 
+      </body> 
+    </html> 
+  `); 
+}); 
+ 
+// Start the server 
+app.listen(port, () => { 
+  console.log(`Server is running on http://localhost:${port}`); 
+}); 
+ 
+S9 Q2 
+//npm install express 
+App.js 
+const express = require('express'); 
+const fs = require('fs'); 
+const path = require('path'); 
+const app = express(); 
+const port = 3000; 
+ 
+// Serve a file when requested 
+app.get('/file/:filename', (req, res) => { 
+  const filename = req.params.filename;  // Get the filename from the URL parameter 
+  const filePath = path.join(__dirname, 'files', filename);  // Path to the "files" directory 
+ 
+  // Read the file content and send it to the client 
+  fs.readFile(filePath, 'utf8', (err, data) => { 
+    if (err) { 
+      // If there's an error (e.g., file not found), return a 404 error 
+      res.status(404).send('File not found'); 
+    } else { 
+      // Send the file content to the client 
+      res.send(data); 
+    } 
+  }); 
+}); 
+ 
+// Start the server 
+app.listen(port, () => { 
+  console.log(`Server is running on http://localhost:${port}`); 
+}); 
+ 
+Directory -> files(file.txt)->app.js->https://localhost:3000/files/file.txt 
+ 
+S12 Q1 
+//npm install mongodb 
+fetchcustomer.js 
+// fetchCustomers.js 
+ 
+const { MongoClient } = require('mongodb'); 
+ 
+// MongoDB connection URI (replace with your own MongoDB URI) 
+const uri = 'mongodb://localhost:27017';  // MongoDB server running locally on default port 
+const dbName = 'your_database_name';  // Replace with your database name 
+const collectionName = 'customers';  // Replace with your collection name 
+ 
+// Create a new MongoClient 
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true }); 
+ 
+// Connect to the MongoDB server 
+client.connect() 
+  .then(() => { 
+    console.log('Connected to MongoDB'); 
+ 
+    // Access the database and collection 
+    const db = client.db(dbName); 
+    const collection = db.collection(collectionName); 
+ 
+    // Fetch all records from the "customers" collection 
+    collection.find({}).toArray((err, results) => { 
+      if (err) { 
+        console.error('Error fetching data:', err); 
+        return; 
+      } 
+ 
+      // Display the results in the console 
+      console.log('Customer Records:', results); 
+       
+      // Close the MongoDB connection 
+      client.close(); 
+    }); 
+  }) 
+  .catch(err => { 
+    console.error('Error connecting to MongoDB:', err); 
+  }); 
+ 
+node fetchcustomes.js 
+ 
+S12 Q2 
+//index.html 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Student Feedback Form</title> 
+  <style> 
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+    } 
+    .container { 
+      width: 300px; 
+      margin: 0 auto; 
+    } 
+    label { 
+      display: block; 
+      margin-bottom: 5px; 
+    } 
+    input, select, textarea { 
+      width: 100%; 
+      padding: 8px; 
+      margin-bottom: 10px; 
+    } 
+    .error { 
+      color: red; 
+      font-size: 12px; 
+    } 
+    .success { 
+      color: green; 
+    } 
+  </style> 
+</head> 
+<body> 
+ 
+  <div class="container"> 
+    <h2>Student Feedback Form</h2> 
+    <form id="feedbackForm" onsubmit="return validateForm()"> 
+      <!-- Name Field --> 
+      <label for="name">Name:</label> 
+      <input type="text" id="name" name="name" placeholder="Enter your name"> 
+      <div id="nameError" class="error"></div> 
+ 
+      <!-- Email ID Field --> 
+      <label for="email">Email ID:</label> 
+      <input type="email" id="email" name="email" placeholder="Enter your email"> 
+      <div id="emailError" class="error"></div> 
+ 
+      <!-- Mobile No. Field --> 
+      <label for="mobile">Mobile No.:</label> 
+      <input type="text" id="mobile" name="mobile" placeholder="Enter your mobile number"> 
+      <div id="mobileError" class="error"></div> 
+ 
+      <!-- Feedback Field --> 
+      <label for="feedback">Feedback:</label> 
+      <select id="feedback" name="feedback"> 
+        <option value="">Select feedback</option> 
+        <option value="Not Good">Not good</option> 
+        <option value="Good">Good</option> 
+        <option value="Very Good">Very good</option> 
+        <option value="Excellent">Excellent</option> 
+      </select> 
+      <div id="feedbackError" class="error"></div> 
+ 
+      <!-- Submit Button --> 
+      <button type="submit">Submit</button> 
+    </form> 
+ 
+    <div id="successMessage" class="success"></div> 
+  </div> 
+ 
+  <script> 
+    // JavaScript to validate form 
+    function validateForm() { 
+      // Clear previous errors 
+      clearErrors(); 
+ 
+      // Get form field values 
+      const name = document.getElementById('name').value; 
+      const email = document.getElementById('email').value; 
+      const mobile = document.getElementById('mobile').value; 
+      const feedback = document.getElementById('feedback').value; 
+ 
+      let isValid = true; 
+ 
+      // Name validation (should not be empty and contain only letters and spaces) 
+      const namePattern = /^[A-Za-z\s]+$/; 
+      if (!namePattern.test(name)) { 
+        document.getElementById('nameError').textContent = "Please enter a valid name (only letters and 
+spaces)."; 
+        isValid = false; 
+      } 
+ 
+      // Email validation (basic format check) 
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; 
+      if (!emailPattern.test(email)) { 
+        document.getElementById('emailError').textContent = "Please enter a valid email address."; 
+        isValid = false; 
+      } 
+ 
+      // Mobile No. validation (should be 10 digits) 
+      const mobilePattern = /^[0-9]{10}$/; 
+      if (!mobilePattern.test(mobile)) { 
+        document.getElementById('mobileError').textContent = "Please enter a valid 10-digit mobile number."; 
+        isValid = false; 
+      } 
+ 
+      // Feedback validation (should not be empty) 
+      if (feedback === "") { 
+        document.getElementById('feedbackError').textContent = "Please select feedback."; 
+        isValid = false; 
+      } 
+ 
+      // If all validations passed, show success message 
+      if (isValid) { 
+        document.getElementById('successMessage').textContent = "Feedback submitted successfully!"; 
+      } 
+ 
+      // Prevent form submission if validation fails 
+      return isValid; 
+    } 
+ 
+    // Function to clear previous error messages 
+    function clearErrors() { 
+      document.getElementById('nameError').textContent = ""; 
+      document.getElementById('emailError').textContent = ""; 
+      document.getElementById('mobileError').textContent = ""; 
+      document.getElementById('feedbackError').textContent = ""; 
+      document.getElementById('successMessage').textContent = ""; 
+    } 
+  </script> 
+ 
+</body> 
+</html> 
+ 
+S13 Q1 
+//hello.js 
+// Define the string 
+const str = "HELLO WORLD!"; 
+// Convert the string to lowercase 
+const lowerCaseStr = str.toLowerCase(); 
+ 
+// Output the result 
+console.log(lowerCaseStr); 
+ 
+node hello.js 
+S13 Q2 
+//index.html 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Student Registration</title> 
+    <script> 
+        // JavaScript function to validate form data 
+        function validateForm() { 
+            // Get form input values 
+            const firstName = document.getElementById('first-name').value; 
+            const lastName = document.getElementById('last-name').value; 
+            const age = document.getElementById('age').value; 
+ 
+            // Regular expressions to check if the names contain only alphabets 
+            const nameRegex = /^[A-Za-z]+$/; 
+ 
+            // Check if first name contains only alphabets 
+            if (!nameRegex.test(firstName)) { 
+                alert("First name must contain only alphabets."); 
+                return false; 
+            } 
+ 
+            // Check if last name contains only alphabets 
+            if (!nameRegex.test(lastName)) { 
+                alert("Last name must contain only alphabets."); 
+                return false; 
+            } 
+ 
+            // Check if age is a number and between 18 and 50 
+            if (isNaN(age) || age < 18 || age > 50) { 
+                alert("Age must be a number between 18 and 50."); 
+                return false; 
+            } 
+ 
+            // If all validations pass 
+            return true; 
+        } 
+    </script> 
+</head> 
+<body> 
+ 
+    <h2>Student Registration Form</h2> 
+ 
+    <form onsubmit="return validateForm()"> 
+        <label for="first-name">First Name:</label> 
+        <input type="text" id="first-name" name="first-name" required> 
+        <br><br> 
+ 
+        <label for="last-name">Last Name:</label> 
+        <input type="text" id="last-name" name="last-name" required> 
+        <br><br> 
+ 
+        <label for="age">Age:</label> 
+        <input type="text" id="age" name="age" required> 
+        <br><br> 
+ 
+        <input type="submit" value="Register"> 
+    </form> 
+ 
+</body> 
+</html> 
+ 
+S14 Q1 
+//server.js  
+// Load the http module to create a web server 
+const http = require('http'); 
+ 
+// Define the hostname and port 
+const hostname = '127.0.0.1';  // Localhost 
+const port = 3000;             // Port to listen on 
+ 
+// Create the server and define the response 
+const server = http.createServer((req, res) => { 
+    // Set the response HTTP header with status code and content type 
+    res.statusCode = 200;  // HTTP 200 OK 
+    res.setHeader('Content-Type', 'text/plain');  // Plain text content type 
+ 
+    // Send the response body 
+    res.end('Hello, World!\n'); 
+}); 
+ 
+// Make the server listen on the defined hostname and port 
+server.listen(port, hostname, () => { 
+    console.log(`Server running at http://${hostname}:${port}/`); 
+}); 
+ 
+node server.js 
+ 
+S14 Q2 
+//index.html 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Employee Registration Form</title> 
+    <script> 
+        // JavaScript function to validate form data 
+        function validateForm() { 
+            const dob = document.getElementById('dob').value; 
+            const joiningDate = document.getElementById('joining-date').value; 
+            const salary = document.getElementById('salary').value; 
+ 
+            // Check if DOB is in the past (DOB should not be in the future) 
+            const dobDate = new Date(dob); 
+            const currentDate = new Date(); 
+            if (dobDate > currentDate) { 
+                alert("Date of Birth cannot be in the future."); 
+                return false; 
+            } 
+ 
+            // Check if joining date is in the past (Joining date should not be in the future) 
+            const joiningDateObj = new Date(joiningDate); 
+            if (joiningDateObj > currentDate) { 
+                alert("Joining Date cannot be in the future."); 
+                return false; 
+            } 
+ 
+            // Check if salary is a valid positive number and greater than 0 
+            if (isNaN(salary) || salary <= 0) { 
+                alert("Salary must be a valid positive number."); 
+                return false; 
+            } 
+ 
+            // If all validations pass 
+            return true; 
+        } 
+    </script> 
+</head> 
+<body> 
+ 
+    <h2>Employee Registration Form</h2> 
+ 
+    <form onsubmit="return validateForm()"> 
+        <label for="first-name">First Name:</label> 
+        <input type="text" id="first-name" name="first-name" required> 
+        <br><br> 
+ 
+        <label for="last-name">Last Name:</label> 
+        <input type="text" id="last-name" name="last-name" required> 
+        <br><br> 
+ 
+        <label for="dob">Date of Birth:</label> 
+        <input type="date" id="dob" name="dob" required> 
+        <br><br> 
+ 
+        <label for="joining-date">Joining Date:</label> 
+        <input type="date" id="joining-date" name="joining-date" required> 
+        <br><br> 
+ 
+        <label for="salary">Salary:</label> 
+        <input type="number" id="salary" name="salary" required> 
+        <br><br> 
+ 
+        <input type="submit" value="Register"> 
+    </form> 
+ 
+</body> 
+</html> 
+ 
+ 
+S15 Q1 
+//npm install mongodb 
+//filename -> fetchStudents.js 
+const { MongoClient } = require('mongodb'); 
+ 
+// Connection URI and Database details 
+const uri = 'mongodb://localhost:27017'; // Adjust if you're not on localhost 
+const dbName = 'your_database_name';     // Replace with your DB name 
+const collectionName = 'students';       // Collection you're reading from 
+ 
+// Create a new MongoClient 
+const client = new MongoClient(uri, { useUnifiedTopology: true }); 
+ 
+async function run() { 
+  try { 
+    // Connect to the MongoDB cluster 
+    await client.connect(); 
+    console.log('Connected to MongoDB'); 
+ 
+    const db = client.db(dbName); 
+    const collection = db.collection(collectionName); 
+ 
+    // Find all documents 
+    const students = await collection.find({}).toArray(); 
+    console.log('Student Records:', students); 
+ 
+  } catch (err) { 
+    console.error('Error:', err); 
+  } finally { 
+    // Close the connection 
+    await client.close(); 
+  } 
+} 
+ 
+run(); 
+ 
+//node fetchStudents.js 
+ 
+S15 Q2 
+//file name-> employeeform.html 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <title>Employee Form</title> 
+  <style> 
+    label { 
+      display: block; 
+      margin-top: 10px; 
+    } 
+    .error { 
+      color: red; 
+      font-size: 0.9em; 
+    } 
+  </style> 
+</head> 
+<body> 
+  <h2>Employee Registration Form</h2> 
+  <form id="employeeForm" onsubmit="return validateForm()"> 
+    <label> 
+      Name: 
+      <input type="text" id="name" name="name" required> 
+      <span class="error" id="nameError"></span> 
+    </label> 
+ 
+    <label> 
+      Email: 
+      <input type="email" id="email" name="email" required> 
+      <span class="error" id="emailError"></span> 
+    </label> 
+ 
+    <label> 
+      Mobile Number: 
+      <input type="text" id="mobile" name="mobile" required> 
+      <span class="error" id="mobileError"></span> 
+    </label> 
+ 
+    <label> 
+      Department: 
+      <input type="text" id="department" name="department" required> 
+      <span class="error" id="departmentError"></span> 
+    </label> 
+ 
+    <label> 
+      Joining Date: 
+      <input type="date" id="joiningDate" name="joiningDate" required> 
+      <span class="error" id="dateError"></span> 
+    </label> 
+ 
+    <br><br> 
+    <input type="submit" value="Submit"> 
+  </form> 
+ 
+  <script> 
+    function validateForm() { 
+      let isValid = true; 
+ 
+      // Clear previous errors 
+      document.querySelectorAll('.error').forEach(span => span.textContent = ''); 
+ 
+      // Regex patterns 
+      const namePattern = /^[A-Za-z\s]+$/; 
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/; 
+      const mobilePattern = /^[0-9]{10}$/; 
+ 
+      const name = document.getElementById("name").value.trim(); 
+      const email = document.getElementById("email").value.trim(); 
+      const mobile = document.getElementById("mobile").value.trim(); 
+      const department = document.getElementById("department").value.trim(); 
+      const joiningDate = document.getElementById("joiningDate").value.trim(); 
+ 
+      // Name validation 
+      if (!namePattern.test(name)) { 
+        document.getElementById("nameError").textContent = "Please enter a valid name."; 
+        isValid = false; 
+      } 
+ 
+      // Email validation 
+      if (!emailPattern.test(email)) { 
+        document.getElementById("emailError").textContent = "Enter a valid email address."; 
+        isValid = false; 
+      } 
+ 
+      // Mobile validation 
+      if (!mobilePattern.test(mobile)) { 
+        document.getElementById("mobileError").textContent = "Enter a 10-digit mobile number."; 
+        isValid = false; 
+      } 
+ 
+      // Department validation 
+      if (department === "") { 
+        document.getElementById("departmentError").textContent = "Department is required."; 
+        isValid = false; 
+      } 
+ 
+      // Joining date validation 
+      if (!joiningDate) { 
+        document.getElementById("dateError").textContent = "Joining date is required."; 
+        isValid = false; 
+      } 
+ 
+      return isValid; 
+    } 
+  </script> 
+</body> 
+</html> 
+ 
+S16 Q1 
+//simple-recipe-book/ 
+├── public/ 
+│   └── index.html 
+├── app.js 
+├── package.json 
+ 
+//index.html 
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <title>Add Recipe</title> 
+</head> 
+<body> 
+  <h1>Recipe Submission</h1> 
+  <form action="/recipes" method="POST"> 
+    <label>Title: <input type="text" name="title" required></label><br><br> 
+    <label>Ingredients:<br> 
+      <textarea name="ingredients" rows="4" cols="40" required></textarea> 
+    </label><br><br> 
+    <label>Instructions:<br> 
+      <textarea name="instructions" rows="4" cols="40" required></textarea> 
+    </label><br><br> 
+    <button type="submit">Add Recipe</button> 
+  </form> 
+</body> 
+</html> 
+//app.js 
+const express = require('express'); 
+const mongoose = require('mongoose'); 
+const bodyParser = require('body-parser'); 
+const path = require('path'); 
+const app = express(); 
+app.use(bodyParser.urlencoded({ extended: true })); // For form data 
+app.use(bodyParser.json());                         
+app.use(express.static('public'));                  
+// For JSON data 
+// Serve HTML from /public 
+// MongoDB connect 
+mongoose.connect('mongodb://localhost:27017/recipes', { 
+useNewUrlParser: true, 
+useUnifiedTopology: true 
+}).then(() => console.log('MongoDB connected')) 
+.catch(err => console.error(err)); 
+// Recipe model 
+const Recipe = mongoose.model('Recipe', new mongoose.Schema({ 
+title: String, 
+ingredients: String, 
+instructions: String 
+})); 
+// Routes 
+app.get('/', (req, res) => { 
+res.sendFile(path.join(__dirname, 'public', 'index.html')); 
+}); 
+app.post('/recipes', async (req, res) => { 
+const { title, ingredients, instructions } = req.body; 
+const newRecipe = new Recipe({ title, ingredients, instructions }); 
+await newRecipe.save(); 
+res.send('<h2>Recipe saved!</h2><a href="/">Add another</a>'); 
+}); 
+// Start server 
+const PORT = 3000; 
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`)); 
+//To run  
+//mongod 
+//node app.js 
+S16 Q2 
+//main.js 
+const EventEmitter = require('events'); 
+ 
+// Create an instance of EventEmitter 
+const eventEmitter = new EventEmitter(); 
+ 
+// Define event listeners (callback functions) 
+eventEmitter.on('greet', (name) => { 
+  console.log(`Hello, ${name}!`); 
+}); 
+ 
+eventEmitter.on('exit', () => { 
+  console.log('Exiting program...'); 
+  process.exit(); 
+}); 
+ 
+// Simulated "main loop" 
+let count = 0; 
+const names = ['Alice', 'Bob', 'Charlie']; 
+ 
+const interval = setInterval(() => { 
+  if (count < names.length) { 
+    // Emit 'greet' event 
+    eventEmitter.emit('greet', names[count]); 
+    count++; 
+  } else { 
+    // Emit 'exit' event 
+    eventEmitter.emit('exit'); 
+    clearInterval(interval); 
+  } 
+}, 1000); // Emit every 1 second 
+ 
+//to run  
+//node main.js 
+ 
+ 
+S23 Q1 
+//server.js 
+const http = require('http'); 
+ 
+const PORT = 3000; 
+ 
+// HTML content embedded in the script 
+const htmlContent = ` 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>Node.js Inline Web Server</title> 
+</head> 
+<body> 
+    <h1>Welcome to the Node.js File Server</h1> 
+    <p>This page is served directly from the Node.js script.</p> 
+</body> 
+</html> 
+`; 
+ 
+// Create an HTTP server 
+const server = http.createServer((req, res) => { 
+    res.writeHead(200, { 'Content-Type': 'text/html' }); 
+    res.end(htmlContent); 
+}); 
+ 
+// Start the server 
+server.listen(PORT, () => { 
+    console.log(`Server running at http://localhost:${PORT}`); 
+}); 
+ 
+node server.js 
+ 
+S23 Q2 
+//module.js 
+exports.getCurrentDateTime = function() { 
+    return new Date().toLocaleString(); 
+}; 
+ 
+//server.js 
+const http = require('http'); 
+const myModule = require('./modules'); // Import the custom module 
+ 
+const PORT = 3000; 
+ 
+// Create an HTTP server 
+const server = http.createServer((req, res) => { 
+    res.writeHead(200, { 'Content-Type': 'text/html' }); 
+    res.end(`<h1>Current Date and Time:</h1><p>${myModule.getCurrentDateTime()}</p>`); 
+}); 
+ 
+// Start the server 
+server.listen(PORT, () => { 
+    console.log(`Server running at http://localhost:${PORT}`); 
+}); 
+ 
+node server.js 
+ 
+S25 Q1 
+//index.html 
+ 
+<!DOCTYPE html> 
+<html lang="en" ng-app="myApp"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>AngularJS Location App</title> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> 
+</head> 
+<body ng-controller="LocationController"> 
+    <h1>Current Web Page Location</h1> 
+    <p><strong>URL:</strong> {{ currentUrl }}</p> 
+ 
+    <script> 
+        // Define AngularJS app 
+        var app = angular.module('myApp', []); 
+ 
+        // Define controller 
+        app.controller('LocationController', function($scope, $window) { 
+            $scope.currentUrl = $window.location.href; // Get current page URL 
+        }); 
+    </script> 
+</body> 
+</html> 
+ 
+S25 Q2 
+const EventEmitter = require('events'); 
+ 
+// Create an event emitter instance 
+const eventEmitter = new EventEmitter(); 
+ 
+// Define event handlers (callback functions) 
+eventEmitter.on('start', () => { 
+    console.log('Event Detected: Application has started!'); 
+}); 
+ 
+eventEmitter.on('data_received', (data) => { 
+    console.log(`Event Detected: Data received -> ${data}`); 
+}); 
+ 
+eventEmitter.on('exit', () => { 
+    console.log('Event Detected: Application is exiting...'); 
+    process.exit(); // Terminates the program 
+}); 
+ 
+// Simulating events at different intervals 
+console.log("Listening for events..."); 
+ 
+setTimeout(() => eventEmitter.emit('start'), 1000); // Trigger 'start' event 
+setTimeout(() => eventEmitter.emit('data_received', 'Hello from Node.js!'), 2000); // Trigger 'data_received' 
+event 
+setTimeout(() => eventEmitter.emit('exit'), 3000); // Trigger 'exit' event 

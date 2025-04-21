@@ -1,0 +1,496 @@
+slip 1 
+  
+Q.1) Create an HTML form for Login and write a JavaScript to validate email ID and Password 
+using Regular Expression.
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+    form {
+      max-width: 300px;
+      margin: auto;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Login Form</h2>
+  <form id="loginForm" onsubmit="return validateForm()">
+    <label>Email:</label>
+    <input type="text" id="email" placeholder="Enter Email">
+    
+    <label>Password:</label>
+    <input type="password" id="password" placeholder="Enter Password">
+    
+    <button type="submit">Login</button>
+    <p class="error" id="errorMsg"></p>
+  </form>
+
+  <script>
+    function validateForm() {
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var errorMsg = document.getElementById("errorMsg");
+
+      var emailPattern =  /^\w+@\w+\.\w{2,4}$/;
+      var passwordPattern =/^(?=.*[a-zA-Z])(?=.*\d).{6,}$/;
+
+      if (!emailPattern.test(email)) {
+        errorMsg.textContent = "Invalid email address.";
+        return false;
+      }
+
+      if (!passwordPattern.test(password)) {
+        errorMsg.textContent = "Password must be at least 6 characters with letters and numbers.";
+        return false;
+      }
+
+      errorMsg.textContent = "";
+      alert("Login successful!");
+      return true;
+    }
+  </script>
+
+</body>
+</html>
+
+
+#####################################
+Slip 2 
+
+Q.1) Create a Node.js file that will convert the output "Full Stack!" into reverse string. 
+
+// reverseString.js
+
+// Original string
+const str = "Full Stack!";
+
+// Function to reverse the string
+function reverseString(input) {
+  return input.split('').reverse().join('');
+}
+
+// Call the function and print result
+const reversed = reverseString(str);
+console.log("Reversed Output:", reversed);
+
+#############################
+
+Slip 3,18
+
+Q1 Using node js create a User Login System.
+
+
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+const port = 3000
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+const users = [{ email: "user@example.com", password: "pass123" }]
+
+app.get('/', (req, res) => {
+  res.send(`<form method="POST" action="/login">
+    <input type="text" name="email" placeholder="Email" />
+    <input type="password" name="password" placeholder="Password" />
+    <button type="submit">Login</button>
+  </form>`)
+})
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body
+  const user = users.find(u => u.email === email && u.password === password)
+  if (user) {
+    res.send('Login successful')
+  } else {
+    res.send('Invalid credentials')
+  }
+})
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`)
+})
+
+################### slip 4 
+
+  Q1 Using node js create an eLearning System.
+
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+const port = 3000
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+let users = [
+  { email: "user@example.com", password: "password123", name: "John Doe" }
+]
+
+let courses = [
+  { id: 1, title: "Node.js Basics", content: "Introduction to Node.js" },
+  { id: 2, title: "JavaScript for Beginners", content: "Learn JavaScript from scratch" }
+]
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to eLearning System</h1><a href="/login">Login</a> | <a href="/register">Register</a>')
+})
+
+app.get('/login', (req, res) => {
+  res.send(`
+    <form method="POST" action="/login">
+      <input type="text" name="email" placeholder="Email" />
+      <input type="password" name="password" placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
+  `)
+})
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body
+  const user = users.find(u => u.email === email && u.password === password)
+  if (user) {
+    res.redirect('/courses')
+  } else {
+    res.send('Invalid credentials')
+  }
+})
+
+app.get('/register', (req, res) => {
+  res.send(`
+    <form method="POST" action="/register">
+      <input type="text" name="email" placeholder="Email" />
+      <input type="password" name="password" placeholder="Password" />
+      <input type="text" name="name" placeholder="Name" />
+      <button type="submit">Register</button>
+    </form>
+  `)
+})
+
+app.post('/register', (req, res) => {
+  const { email, password, name } = req.body
+  const userExists = users.some(u => u.email === email)
+  if (userExists) {
+    res.send('User already exists')
+  } else {
+    users.push({ email, password, name })
+    res.send('Registration successful, you can now <a href="/login">login</a>')
+  }
+})
+
+app.get('/courses', (req, res) => {
+  let courseList = '<h1>Available Courses</h1><ul>'
+  courses.forEach(course => {
+    courseList += `<li><a href="/courses/${course.id}">${course.title}</a></li>`
+  })
+  courseList += '</ul>'
+  res.send(courseList)
+})
+
+app.get('/courses/:id', (req, res) => {
+  const courseId = parseInt(req.params.id)
+  const course = courses.find(c => c.id === courseId)
+  if (course) {
+    res.send(`<h1>${course.title}</h1><p>${course.content}</p>`)
+  } else {
+    res.send('Course not found')
+  }
+})
+
+app.listen(port, () => {
+  console.log(`eLearning system running on http://localhost:${port}`)
+})
+
+
+
+#############################
+slip 5
+
+Q1 Create a Node.js file that writes an HTML form, with an upload field.
+
+const express = require('express')
+const multer = require('multer')
+const app = express()
+const port = 3000
+
+const upload = multer({ dest: 'uploads/' })
+
+app.get('/', (req, res) => {
+  res.send(`
+    <form method="POST" action="/upload" ">
+      <input type="file" name="file" />
+      <button type="submit">Upload</button>
+    </form>
+  `)
+})
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.send('File uploaded: ' + req.file.originalname)
+})
+
+app.listen(port, () => {
+  console.log(`http://localhost:${port}`)
+})
+
+
+#######################
+Slip 6
+
+Q1 Write angular JS by using ng-click directive to display an alert message after clicking the 
+element.
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+
+  <button ng-click="showAlert()">Click Me</button>
+
+  <script>
+    angular.module('myApp', [])
+    .controller('myCtrl', function($scope) {
+      $scope.showAlert = function() {
+        alert('Hello! You clicked the button.');
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
+#################################
+slip 7
+
+Q1 ) Create angular JS Application that show the current Date and Time of the System (Use Interval 
+Service)
+
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="TimeController">
+
+  <h2>Current Date and Time:</h2>
+  <p>{{ currentTime }}</p>
+
+  <script>
+    angular.module('myApp', [])
+    .controller('TimeController', function($scope, $interval) {
+      $scope.updateTime = function() {
+        $scope.currentTime = new Date().toLocaleString()
+      }
+
+      $scope.updateTime()
+      $interval($scope.updateTime, 1000)
+    })
+  </script>
+
+</body>
+</html>
+
+###################
+slip 8 & slip 14
+
+Q.1) Create a Simple Web Server using node js
+
+const http = require('http')
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' })
+  res.end('<h1>Hello, this is a simple Node.js Web Server!</h1>')
+})
+
+server.listen(3000, () => {
+  console.log('Server running at http://localhost:3000')
+})
+
+##########################
+
+Slip 9
+
+Q.1) Create a Node.js file that writes an HTML form, with a concatenate two string.
+
+
+const http = require('http')
+const querystring = require('querystring')
+
+http.createServer((req, res) => {
+  if (req.method === 'GET') {
+    res.end(`
+      <form method="POST">
+        <input name="a" placeholder="First String" />
+        <input name="b" placeholder="Second String" />
+        <button type="submit">Join</button>
+      </form>
+    `)
+  } else if (req.method === 'POST') {
+    let data = ''
+    req.on('data', chunk => { data += chunk })
+    req.on('end', () => {
+      const q = querystring.parse(data)
+      res.end(`<h2>Result: ${q.a + q.b}</h2>`)
+    })
+  }
+}).listen(3000, () => {
+  console.log('http://localhost:3000')
+})
+
+####################################
+
+slip 10 ,11
+
+const mysql = require('mysql')
+
+const con = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: ''
+})
+
+con.connect(err => {
+  if (err) throw err
+  con.query('CREATE DATABASE IF NOT EXISTS college', (err) => {
+    if (err) throw err
+    con.changeUser({ database: 'college' }, (err) => {
+      if (err) throw err
+      con.query('CREATE TABLE IF NOT EXISTS students (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100))', (err) => {
+        if (err) throw err
+        console.log('Database and table created')
+        con.end()
+      })
+    })
+  })
+})
+
+
+########################
+slip 12
+
+Q.1) Create a node.js file that Select all records from the "customers" table, and display the result 
+object on console.
+
+same as above only add 
+Select * FROM customer
+
+
+##############################
+Slip 13
+
+Q.1) Create a Node.js file that will convert the output "HELLO WORLD!" into lower-case letters.
+const str = "HELLO WORLD!"
+console.log(str.toLowerCase())
+
+
+###############################
+slip 16
+
+Using node js create a Recipe Book. 
+
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+const port = 3000
+
+let recipes = []
+
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.get('/', (req, res) => {
+  let list = recipes.map(r => `<li><b>${r.name}</b>: ${r.details}</li>`).join('')
+  res.send(`
+    <h2>Recipe Book</h2>
+    <ul>${list}</ul>
+    <form method="POST" action="/add">
+      <input name="name" placeholder="Recipe Name" required><br>
+      <textarea name="details" placeholder="Recipe Details" required></textarea><br>
+      <button type="submit">Add Recipe</button>
+    </form>
+  `)
+})
+
+app.post('/add', (req, res) => {
+  const { name, details } = req.body
+  recipes.push({ name, details })
+  res.redirect('/')
+})
+
+app.listen(port, () => {
+  console.log(`http://localhost:${port}`)
+})
+
+
+
+#################
+
+slip 19 
+
+Q.1) Create a Node.js file that will convert the output "Hello World!" into upper-case letters. 
+const http = require('http')
+
+http.createServer((req, res) => {
+  const msg = "Hello World!"
+  const upper = msg.toUpperCase()
+
+  res.writeHead(200, { 'Content-Type': 'text/html' })
+  res.end(`<h2>${upper}</h2>`)
+}).listen(3000, () => {
+  console.log('http://localhost:3000')
+})
+
+
+
+###################
+slip 20 
+Q.1) Create a Node.js file that demonstrate create student database and table in MySQL
+
+const mysql = require('mysql')
+
+const con = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: ''
+})
+
+con.connect(err => {
+  if (err) throw err
+  con.query('CREATE DATABASE IF NOT EXISTS student', err => {
+    if (err) throw err
+    con.changeUser({ database: 'student' }, err => {
+      if (err) throw err
+      const sql = `CREATE TABLE IF NOT EXISTS students (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        age INT,
+        course VARCHAR(100)
+      )`
+      con.query(sql, err => {
+        if (err) throw err
+        console.log('Database and table created')
+        con.end()
+      })
+    })
+  })
+})
+
